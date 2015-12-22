@@ -15,7 +15,7 @@ You can use the behaviour on a TextBlock like this:
                                                    SearchString="{Binding ...}"/>
     </interactivity:Interaction.Behaviors>
 </TextBlock>
-`
+```
 Of course this can be used in a ListView, too.
 
 ### Properties
