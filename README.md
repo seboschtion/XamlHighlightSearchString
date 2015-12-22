@@ -27,11 +27,11 @@ The color of the matching text.
 default: `string.Empty`
 The (sub)string to highlight.
 
+#### RegexOptions `RegexOptions`
+default: `RegexOptions.IgnoreCase`
+Search is case insensitive by default, but you can give other or more RegexOptions.
+
 #### ImproperMatch `bool`
 default: `true`
 If true, a space in the SearchString will separate different search strings. If false, the whole SearchString must match to highlight some text.
 ![Example 2](https://github.com/seboschtion/XamlHighlightSearchString/blob/master/example2.png)
-
-#### ImproperMatch `RegexOptions`
-default: `RegexOptions.IgnoreCase`
-Search is case insensitive by default, but you can give other or more RegexOptions.
