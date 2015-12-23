@@ -23,7 +23,7 @@ namespace Seboschtion
         }
     }
 
-    public class HighlightSearchStringBehaviour : DependencyObject, IBehavior
+    public class HighlightSearchStringBehavior : DependencyObject, IBehavior
     {
         private enum StartColorizationWith
         {
@@ -32,19 +32,19 @@ namespace Seboschtion
         }
 
         private string _textBlockContent = string.Empty;
-        private TextBlock TextBlock => (TextBlock)AssociatedObject;
+        private TextBlock AttachedTextBlock => (TextBlock)AssociatedObject;
 
         public DependencyProperty HighlightForegroundProperty = DependencyProperty.Register("HighlightForeground",
-           typeof(Brush), typeof(HighlightSearchStringBehaviour), null);
+           typeof(Brush), typeof(HighlightSearchStringBehavior), null);
 
         public DependencyProperty SearchStringProperty = DependencyProperty.Register("SearchString", typeof(string),
-            typeof(HighlightSearchStringBehaviour), new PropertyMetadata(string.Empty, RegexChangedCallback));
+            typeof(HighlightSearchStringBehavior), new PropertyMetadata(string.Empty, RegexChangedCallback));
 
         public DependencyProperty RegexOptionsProperty = DependencyProperty.Register("RegexOptions", typeof(RegexOptions),
-            typeof(HighlightSearchStringBehaviour), new PropertyMetadata(RegexOptions.IgnoreCase));
+            typeof(HighlightSearchStringBehavior), new PropertyMetadata(RegexOptions.IgnoreCase));
 
         public DependencyProperty ImproperMatchProperty = DependencyProperty.Register("ImproperMatch", typeof(bool),
-            typeof(HighlightSearchStringBehaviour), new PropertyMetadata(true));
+            typeof(HighlightSearchStringBehavior), new PropertyMetadata(true));
 
         public DependencyObject AssociatedObject { get; private set; }
 
@@ -88,7 +88,7 @@ namespace Seboschtion
             }
             else
             {
-                throw new Exception("HighlightSearchStringBehaviour is only attachable to TextBlocks.");
+                throw new Exception("HighlightSearchStringBehavior is only attachable to TextBlocks.");
             }
         }
 
@@ -99,25 +99,25 @@ namespace Seboschtion
 
         private static void RegexChangedCallback(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            var behaviour = (HighlightSearchStringBehaviour) obj;
+            var behaviour = (HighlightSearchStringBehavior) obj;
             behaviour.ColorizeTextElements(e.NewValue.ToString());
         }
 
         private void ColorizeTextElements(string pattern)
         {
-            _textBlockContent = TextBlock.Text;
+            _textBlockContent = AttachedTextBlock.Text;
 
             pattern = PrepareForImproperMatch(pattern);
             var regex = new Regex(pattern, this.RegexOptions);
             var mismatches = regex.Split(_textBlockContent);
-            TextBlock.Inlines.Clear();
+            AttachedTextBlock.Inlines.Clear();
             var matches = regex.Matches(_textBlockContent).ToArray();
             var startWithMismatch = mismatches.Length > 0 && _textBlockContent.StartsWith(mismatches.First());
             string[] splits = startWithMismatch ? MergedSplits(mismatches, matches) : MergedSplits(matches, mismatches);
 
             foreach (var run in ColorizedSplits(splits, startWithMismatch ? StartColorizationWith.Second : StartColorizationWith.First))
             {
-                TextBlock.Inlines.Add(run);
+                AttachedTextBlock.Inlines.Add(run);
             }
         }
 

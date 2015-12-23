@@ -1,18 +1,18 @@
 # XamlHighlightSearchString
 
 ## In short
-A behaviour for TextBlocks that allows them to highlight a bindable substring. Usable with the Windows 10 SDK.
-![Example 1](https://github.com/seboschtion/XamlHighlightSearchString/blob/master/example.png)
+A behavior for TextBlocks that allows them to highlight a bindable substring. Usable with the Windows 10 SDK.
+![Example 1](https://github.com/seboschtion/XamlHighlightSearchString/blob/master/examples/example.png)
 
 ## In long
-Bind a text to this behaviour and the matching text in the TextBlock will be highlighted.
-To use this behaviour you must install the [Microsoft.Xaml.Behaviours.Uwp](https://blogs.windows.com/buildingapps/2015/11/30/xaml-behaviors-open-source-and-on-uwp/) Nuget package and rename the namespace of the classes.
-You can use the behaviour on a TextBlock like this:
+Bind a text to this behavior and the matching text in the TextBlock will be highlighted.
+To use this behavior you must install the [Microsoft.Xaml.Behaviors.Uwp](https://blogs.windows.com/buildingapps/2015/11/30/xaml-behaviors-open-source-and-on-uwp/) Nuget package and rename the namespace of the classes.
+You can use the behavior on a TextBlock like this:
 ```xml
 <TextBlock Text="{Binding}">
     <interactivity:Interaction.Behaviors>
-        <behaviours:HighlightSearchStringBehaviour HighlightForeground="DodgerBlue"
-                                                   SearchString="{Binding ...}"/>
+        <behaviors:HighlightSearchStringBehavior HighlightForeground="DodgerBlue"
+                                                  SearchString="{Binding ...}"/>
     </interactivity:Interaction.Behaviors>
 </TextBlock>
 ```
@@ -34,4 +34,4 @@ Search is case insensitive by default, but you can give other or more RegexOptio
 #### ImproperMatch `bool`
 default: `true`
 If true, a space in the SearchString will separate different search strings. If false, the whole SearchString must match to highlight some text.
-![Example 2](https://github.com/seboschtion/XamlHighlightSearchString/blob/master/example2.png)
+![Example 2](https://github.com/seboschtion/XamlHighlightSearchString/blob/master/examples/example2.png)
