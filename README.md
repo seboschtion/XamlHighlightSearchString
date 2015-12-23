@@ -12,7 +12,7 @@ You can use the behavior on a TextBlock like this:
 <TextBlock Text="{Binding}">
     <interactivity:Interaction.Behaviors>
         <behaviors:HighlightSearchStringBehavior HighlightForeground="DodgerBlue"
-                                                  SearchString="{Binding ...}"/>
+                                                 SearchString="{Binding ...}"/>
     </interactivity:Interaction.Behaviors>
 </TextBlock>
 ```
