@@ -10,7 +10,7 @@ using Microsoft.Xaml.Interactivity;
 
 namespace Seboschtion
 {
- internal static class MatchCollectionExtensions
+    internal static class MatchCollectionExtensions
     {
         internal static string[] ToArray(this MatchCollection matchCollection)
         {
@@ -126,15 +126,23 @@ namespace Seboschtion
             }
 
             _textBlockContent = AttachedTextBlock.Text;
+            if (string.IsNullOrEmpty(_textBlockContent))
+            {
+                return;
+            }
 
             string pattern = PrepareForImproperMatch(SearchString);
             var regex = new Regex(pattern, this.RegexOptions);
             var mismatches = regex.Split(_textBlockContent);
-            AttachedTextBlock.Inlines.Clear();
             var matches = regex.Matches(_textBlockContent).ToArray();
             var startWithMismatch = mismatches.Length > 0 && _textBlockContent.StartsWith(mismatches.First());
             string[] splits = startWithMismatch ? MergedSplits(mismatches, matches) : MergedSplits(matches, mismatches);
+            if (splits.Length == 1 && startWithMismatch)
+            {
+                return;
+            }
 
+            AttachedTextBlock.Inlines.Clear();
             foreach (var run in ColorizedSplits(splits, startWithMismatch ? StartColorizationWith.Second : StartColorizationWith.First))
             {
                 AttachedTextBlock.Inlines.Add(run);
