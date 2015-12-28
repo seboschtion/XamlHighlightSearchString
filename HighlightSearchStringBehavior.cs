@@ -10,7 +10,7 @@ using Microsoft.Xaml.Interactivity;
 
 namespace Seboschtion
 {
-    internal static class MatchCollectionExtensions
+ internal static class MatchCollectionExtensions
     {
         internal static string[] ToArray(this MatchCollection matchCollection)
         {
@@ -38,7 +38,7 @@ namespace Seboschtion
            typeof(Brush), typeof(HighlightSearchStringBehavior), null);
 
         public DependencyProperty SearchStringProperty = DependencyProperty.Register("SearchString", typeof(string),
-            typeof(HighlightSearchStringBehavior), new PropertyMetadata(string.Empty, RegexChangedCallback));
+            typeof(HighlightSearchStringBehavior), new PropertyMetadata(string.Empty, SearchStringChangedCallback));
 
         public DependencyProperty RegexOptionsProperty = DependencyProperty.Register("RegexOptions", typeof(RegexOptions),
             typeof(HighlightSearchStringBehavior), new PropertyMetadata(RegexOptions.IgnoreCase));
@@ -71,7 +71,7 @@ namespace Seboschtion
         }
 
         /// <summary>
-        /// If false, the whole SearchString must match the text in the TextBlock. If true, spaces are assumed to be search string delimiters.
+        /// If false, the whole SearchString must match the text in the AttachedTextBlock. If true, spaces are assumed to be search string delimiters.
         /// Default: true
         /// </summary>
         public bool ImproperMatch
@@ -85,6 +85,10 @@ namespace Seboschtion
             if (associatedObject is TextBlock)
             {
                 AssociatedObject = associatedObject;
+                if (!string.IsNullOrEmpty(SearchString))
+                {
+                    ObserveTextBlockAndApplySearchTerm();
+                }
             }
             else
             {
@@ -97,17 +101,33 @@ namespace Seboschtion
             AssociatedObject = null;
         }
 
-        private static void RegexChangedCallback(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        private static void SearchStringChangedCallback(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            var behaviour = (HighlightSearchStringBehavior) obj;
-            behaviour.ColorizeTextElements(e.NewValue.ToString());
+            var behaviour = (HighlightSearchStringBehavior)obj;
+            behaviour.ColorizeTextElements();
         }
 
-        private void ColorizeTextElements(string pattern)
+        private void ObserveTextBlockAndApplySearchTerm()
         {
+            AttachedTextBlock.Loaded += AttachedTextBlockOnLoaded;
+        }
+
+        private void AttachedTextBlockOnLoaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            ColorizeTextElements();
+            AttachedTextBlock.Loaded -= AttachedTextBlockOnLoaded;
+        }
+
+        private void ColorizeTextElements()
+        {
+            if (AttachedTextBlock == null)
+            {
+                return;
+            }
+
             _textBlockContent = AttachedTextBlock.Text;
 
-            pattern = PrepareForImproperMatch(pattern);
+            string pattern = PrepareForImproperMatch(SearchString);
             var regex = new Regex(pattern, this.RegexOptions);
             var mismatches = regex.Split(_textBlockContent);
             AttachedTextBlock.Inlines.Clear();
@@ -127,7 +147,7 @@ namespace Seboschtion
             int pointer1 = 0, pointer2 = 0;
             for (int i = 0; i < merged.Length; i++)
             {
-                merged[i] = i%2 == 0 ? elements1[pointer1++] : elements2[pointer2++];
+                merged[i] = i % 2 == 0 ? elements1[pointer1++] : elements2[pointer2++];
             }
             return merged;
         }
@@ -136,8 +156,8 @@ namespace Seboschtion
         {
             for (int i = 0; i < splits.Length; i++)
             {
-                var run = new Run {Text = splits[i]};
-                if (i%2 == (int)start)
+                var run = new Run { Text = splits[i] };
+                if (i % 2 == (int)start)
                 {
                     run.Foreground = HighlightForeground;
                 }
